@@ -28,4 +28,4 @@ jobs:
 
     - name: Deploy to K8S
       run: |
-        helm upgrade --install p-app ./papp-chart/ --namespace=dev-papp --values ./values.yaml 
+        helm upgrade --install p-app ./papp-chart/ --namespace=dev-papp --values ./values.yaml  --set image.tag=${{ github.sha }}
