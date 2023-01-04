@@ -1,0 +1,31 @@
+name: Build and Deploy to Azure AKS
+on: [push]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+
+    - name: Az CLI login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CRED }}
+
+    - name: Build and Push Image to ACR
+      run: |
+        az acr build --image devacr03.azurecr.io/p-app:${{ github.sha }} -registry devacr03 -g rg-acr .
+
+    - name: Get K8S context
+      uses: azure/aks-set-context@v2.0
+      with: 
+        resource-group: ${{ secrets.RG }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+
+    - name: Helm installer
+      uses: Azure/setup-helm@v3
+
+    - name: Deploy to K8S
+      run: |
+        helm upgrade --install p-app ./papp-chart/ --namespace=dev-papp --values ./values.yaml 
