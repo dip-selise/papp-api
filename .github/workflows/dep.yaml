@@ -15,7 +15,7 @@ jobs:
 
     - name: Build and Push Image to ACR
       run: |
-        az acr build --image devacr03.azurecr.io/p-app:${{ github.sha }} -registry devacr03 -g rg-acr .
+        az acr build --image devacr03.azurecr.io/p-app:${{ github.sha }} --registry devacr03 -g rg-acr .
 
     - name: Get K8S context
       uses: azure/aks-set-context@v2.0
